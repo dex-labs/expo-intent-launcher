@@ -63,7 +63,17 @@ class IntentLauncherModule : Module() {
 
       params.extra?.let {
         val valuesList = it.mapValues { (_, value) ->
-          if (value is Double) value.toInt() else value
+          when (value) {
+            is Double -> value.toInt()
+            is String -> {
+              if (value.startsWith("LONG")) {
+                value.removePrefix("LONG").toLongOrNull() ?: value
+              } else {
+                value
+              }
+            }
+            else -> value
+          }
         }
         intent.putExtras(valuesList.toBundle())
       }
