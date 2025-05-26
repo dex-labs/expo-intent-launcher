@@ -53,13 +53,20 @@ class IntentLauncherModule : Module() {
         }
       }
 
+      //log params extra before starting the activity
+
       params.extra?.let {
-        val valuesList = it.mapValues { (_, value) ->
-          when {
-            value is Double -> value.toInt()
-            value is String && value.startsWith("LONG") -> value.substring(4).toLong()
-            else -> value
-          }
+        val valuesList = it.mapValues { (key, value) ->
+            println("Before transformation - Key: $key, Value: $value (${value::class.simpleName})")
+            
+            val transformedValue = when {
+                value is Double -> value.toInt()
+                value is String && value.startsWith("LONG") -> value.substring(4).toLong()
+                else -> value
+            }
+            
+            println("After transformation - Key: $key, Value: $transformedValue (${transformedValue::class.simpleName})")
+            transformedValue
         }
         intent.putExtras(valuesList.toBundle())
       }
